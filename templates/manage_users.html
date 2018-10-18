@@ -1,0 +1,53 @@
+{%- set title='Manage users' -%}
+{% include "header.html" %}
+
+
+<p><b>Hide</b> means that a user, while not being fully deleted, will
+  not show up with a 'No snippet' tag on weekly-snippet pages
+  until the next time they enter a snippet (at which point their
+  status will be reset to 'un-hidden').  This should normally be
+  favored over <b>delete</b>.  (That way returning interns will
+  retain their old snippets.)
+</p>
+
+<form action="/admin/manage_users" method="get">
+<input type="hidden" name="sort_by" value="{{sort_by}}">
+<table>
+<tbody>
+<tr>
+  <th> </th>
+  {% for (key, header) in (("email", "Email"),
+                           ("creation_time", "Joined"),
+                           ("last_snippet_time", "Last snippet")) %}
+  <th>{%if sort_by == key %}{{ header }}{% else %}<a href="/admin/manage_users?sort_by={{key}}">{{ header }}</a>{% endif %}</th>
+  {% endfor %}
+</tr>
+{% for (email, hidden, created, weeks_since_snippet) in user_data %}
+<tr>
+  <td>
+    {% if hidden %}
+        <input class="button hide-account-button" type="button" data-email="{{email}}" name="unhide {{email}}" value="Unhide">
+    {% else %}
+        <input class="button hide-account-button" type="button" data-email="{{email}}" name="hide {{email}}" value="Hide">
+    {% endif %}
+    <input class="button delete-account-button" type="button" data-email="{{email}}" name="delete {{email}}" value="Delete">
+  </td>
+  <td>
+    {{ email }}
+  </td>
+  <td>
+    {% if created %}{{ created|iso_date }}{% else %}(unknown){% endif %}
+  </td>
+  <td>
+    {% if weeks_since_snippet == 1 %}1 week ago{% elif weeks_since_snippet != None %}{{ weeks_since_snippet }} weeks ago{% else %}--{% endif %}
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</form>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="/static/manage_users.js?v1"></script>
+
+{% include "footer.html" %}
