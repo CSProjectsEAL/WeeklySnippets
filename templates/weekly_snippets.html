@@ -1,0 +1,52 @@
+{%- set title='Snippets for the week starting ' + view_week|readable_date -%}
+{% include "header.html" %}
+
+<div class="weekly-snippet-heading">
+  <a class="weekly-snippet-nav-link" href="/weekly?week={{prev_week|iso_date}}">&#8249;</a>
+  <h1>
+    <span class="snippets-title">Snippets for the week starting </span>
+    <strong>{{view_week|readable_date}}</strong>
+  </h1>
+  <a class="weekly-snippet-nav-link" href="/weekly?week={{next_week|iso_date}}">&#8250;</a>
+</div>
+
+{% for category_and_snippets in categories_and_snippets %}
+  <div class="snippet-category">
+    <h2> {{category_and_snippets.0}} </h2>
+
+    {% for (snippet, user) in category_and_snippets.1 %}
+      <div class="snippet-section unique-snippet">
+        <img class="snippet-avatar" src="http://www.gravatar.com/avatar/{{snippet.email_md5_hash}}?s=50&d=retro">
+        {% if user.display_name %}
+          <h3>{{user.display_name}} ({{user.email}}):</h3>
+        {% elif snippet.display_name %}
+          <h3>{{snippet.display_name}} ({{user.email}}):</h3>
+        {% else %}
+          <h3>{{user.email}}:</h3>
+        {% endif %}
+        {% if snippet.private %}<span class="snippet-tag snippet-tag-private">Private</span>{% endif %}
+        {% if not snippet.text %}<span class="snippet-tag snippet-tag-none">No snippet</span>{% endif %}
+        {% if snippet.text %}
+          {% if snippet.is_markdown %}
+          <div class="snippet-text-markdown">{{snippet.text|safe}}</div>
+          {% else %}
+          <div class="snippet-text">{{snippet.text|urlize}}</div>
+          {% endif %}
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% endfor %}
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+<script>
+      // Pulled from static/snippets.js
+      marked.setOptions({sanitize: true});
+      $(".snippet-text-markdown").each(function(i, v) {
+         v.innerHTML = window.marked(v.innerHTML);
+      });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,466 @@
+body {
+    font-family: "Open Sans", sans-serif;
+    font-size: 12px;
+    padding: 0;
+    margin: 0;
+}
+
+/* Reset styles */
+* {
+    box-sizing: border-box;
+}
+legend {
+  padding: 0;
+  display: table;
+}
+fieldset {
+  border: 0;
+  padding: 0.01em 0 0 0;
+  margin: 0;
+  min-width: 0;
+}
+body:not(:-moz-handler-blocked) fieldset {
+  display: table-cell;
+}
+
+.centered-content {
+    margin: 0 auto;
+    max-width: 1000px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+/* Navigation */
+.header {
+    background: #222;
+    color: rgba(255, 255, 255, 0.51);
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.header a,
+.header a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+.logo {
+    font-size: 24px;
+}
+.navigation {
+    float: right;
+}
+.navigation-link {
+    display: inline-block;
+    line-height: 24px;
+    opacity: 0.8;
+    padding: 4px 8px;
+}
+.navigation-link:hover,
+.navigation-link:focus {
+    opacity: 1;
+}
+.sub-header {
+    background: #eee;
+    border-bottom: 1px solid #ccc;
+    line-height: 2;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+.sub-header form {
+    display: -webkit-flex;
+    display: flex;
+    margin: 5px 0;
+    max-width: 400px;
+}
+.sub-header input[type="text"] {
+    -webkit-flex: 1;
+    flex: 1;
+    margin: 0 5px;
+    width: auto;
+}
+.sub-header input[type="submit"] {
+    padding: 3px 10px;
+}
+
+/* Alert messages */
+.page-alert {
+    /* Green background and darker green border/text */
+    background: #cae2ae;
+    border: 1px solid #639b24;
+    color: #639b24;
+    font-size: 16px;
+    margin-top: 10px;
+    padding: 10px 20px;
+}
+.snippet-alert {
+    /* Red background */
+    background: #d24a45;
+    border-radius: 4px;
+    color: #fff;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 400;
+    margin-left: 3px;
+    padding: 2px 8px;
+    vertical-align: text-bottom;
+}
+.snippet-warning {
+    /* Red background and darker red border/text */
+    background: #fbe2e0;
+    border: 1px solid #c52717;
+    color: #c52717;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+}
+
+/* Generic styles */
+.clear-fix:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+input[type="text"],
+.button,
+textarea {
+    /* Override iOS border/gradient styles */
+    -webkit-border-radius: inherit;
+    -webkit-appearance: none;
+}
+
+input[type="text"],
+textarea {
+    border: 1px solid #ccc;
+    padding: 2px 4px;
+}
+
+textarea {
+    max-width: 100%;
+}
+
+a {
+    /* Blue links */
+    color: #337ab7;
+}
+a:hover,
+a:focus {
+    /* Darker blue for hovered/focused links */
+    color: #23527c;
+}
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 10px 20px;
+}
+
+/* Headings */
+h1 {
+    font-weight: normal;
+}
+/* Buttons */
+.button {
+    background: #fff;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    color: #222;
+    padding: 5px 10px;
+}
+.button:hover,
+.button:focus {
+    background: #eee;
+    border-color: #aaa;
+    cursor: pointer;
+}
+.button[disabled] {
+    background: #eee;
+    border-color: #ccc;
+    color: #aaa;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+/* Content */
+.page-content {
+    overflow-x: auto;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+/* Snippets */
+
+.snippets-title {
+    color: #888;
+    display: block;
+    font-size: 10px;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+.snippet {
+    border-top: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 10px 0;
+}
+.snippet-header {
+    margin-bottom: 10px;
+}
+.snippet-header h2 {
+    display: inline-block;
+    margin: 0;
+}
+.snippet-actions {
+    float: right;
+}
+.save-button:not(:disabled) {
+    /* Green button background */
+    background-color: #639b24;
+    border-color: #639b24;
+    color: #fff;
+}
+.save-button:not(:disabled):hover {
+    /* Darker green button background on hover */
+    background-color: #568522;
+    border-color: #568522;
+}
+.hide-button:not(:disabled) {
+    /* Yellow button background */
+    background-color: #f0ad4e;
+    border-color: #eea236;
+    color: #fff;
+}
+.hide-button:not(:disabled):hover {
+    /* Darker yellow button background on hover */
+    background-color: #ec971f;
+    border-color: #d58512;
+}
+.delete-button:not(:disabled) {
+    /* Red button background */
+    background-color: #d9534f;
+    border-color: #d43f3a;
+    color: #fff;
+}
+.delete-button:not(:disabled):hover {
+    /* Darker red button background on hover */
+    background-color: #c9302c;
+    border-color: #ac2925;
+}
+.snippet-setting {
+    color: #888;
+    margin-bottom: 4px;
+}
+.snippet-setting a {
+    color: #666;
+}
+.snippet-textarea {
+    box-sizing: border-box;
+    font-size: inherit;
+    margin-top: 10px;
+    padding: 10px 10px;
+}
+.snippet-text,
+.snippet-text-markdown {
+    font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+}
+.snippet-text {
+    font-family: "Lucida Console", Monaco, monospace;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    white-space: pre;
+}
+.snippet-text-markdown ul {
+    margin: 0;
+}
+.snippet-text-markdown p {
+    margin: 0.3em 0;
+}
+.snippet-text-markdown img {
+    max-width: 100%;
+}
+
+/* Weekly snippets */
+.weekly-snippet-heading {
+    text-align: center;
+}
+.weekly-snippet-heading h1 {
+    display: inline-block;
+    padding: 0 10px;
+    /* Keep about the same width so the arrows stay in the same place */
+    min-width: 250px;
+    vertical-align: middle;
+}
+.weekly-snippet-nav-link {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #999;
+    display: inline-block;
+    font-size: 24px;
+    height: 28px;
+    line-height: 20px;
+    text-decoration: none;
+    width: 28px;
+}
+.weekly-snippet-nav-link:hover,
+.weekly-snippet-nav-link:focus {
+    background-color: #ddd;
+    border-color: #bbb;
+    color: #888;
+}
+.snippet-category {
+    padding-bottom: 10px;
+}
+.snippet-category h2 {
+    border-bottom: 1px solid #ddd;
+    font-weight: normal;
+    margin-top: 10px;
+    padding-bottom: 5px;
+}
+.snippet-section {
+    position: relative;
+}
+.snippet-section,
+.snippet-preview-container {
+    margin-top: 10px;
+}
+.snippet-section h3,
+.snippet-preview-container h3,
+.snippet-tag {
+    display: inline-block;
+    line-height: 23px;
+    margin: 0;
+    vertical-align: middle;
+}
+.snippet-tag {
+    background-color: #ddd;
+    border-radius: 20px;
+    margin-left: 0.4em;
+    padding: 0 8px;
+}
+.snippet-tag-private {
+    background-color: #edf;
+}
+
+/* Avatars */
+.snippet-avatar {
+    border-radius: 2px;
+    /* Margin + avatar width */
+    left: -35px;
+    margin-right: 10px;
+    position: absolute;
+    width: 25px;
+}
+
+/* User settings */
+.user-settings-label {
+    display: inline-block;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+.user-settings-textarea {
+    display: block;
+}
+.user-settings-block {
+    margin: 1em 0;
+}
+.user-settings-full-width-input {
+    display: block;
+    width: 100%;
+}
+
+
+/* Manage users */
+table {
+    border-collapse: collapse;
+}
+table tr:nth-child(odd) {
+    background-color: #f1f1f1;
+}
+table tr:nth-child(even) {
+    background-color: #ffffff;
+}
+table th {
+    color: #ffffff;
+    background-color: #555555;
+    border: 1px solid #555555;
+    padding: 3px;
+    vertical-align: top;
+    text-align: left;
+}
+table th a:link,
+table th a:visited {
+    color: #ffffff;
+}
+table th a:hover,
+table th a:focus,
+table th a:active {
+    color: #EE872A;
+}
+table td {
+    border:1px solid #d4d4d4;
+    padding: 5px;
+    vertical-align: top;
+}
+
+.mobile-visible {
+    display: none;
+}
+.mobile-hidden {
+    display: inherit;
+}
+/* Media Queries */
+@media (max-width: 500px) {
+    .mobile-hidden {
+        display: none;
+    }
+    .mobile-visible {
+        display: inherit;
+    }
+    h1 {
+        font-size: 1.3em;
+    }
+    h2 {
+        font-size: 1.2em;
+    }
+    h3 {
+        font-size: 1.1em;
+    }
+
+    .centered-content {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .snippet-category {
+        /* Leave room for avatars and their margin */
+        padding-left: 35px;
+    }
+
+    .header {
+        text-align: center;
+    }
+    .navigation {
+        float: none;
+    }
+    .navigation-link {
+        display: inline-block;
+        line-height: 12px;
+        opacity: 0.8;
+        padding: 4px 0;
+        font-size: 12px;
+    }
+    .sub-header {
+        font-size: 10px;
+    }
+    .snippet-alert {
+        font-size: 9px;
+        margin-left: 0;
+        margin-top: 3px;
+        padding: 1px 4px;
+        vertical-align: text-top;
+    }
+
+    .weekly-snippet-heading h1 {
+        /* Keep about the same width so the arrows stay in the same place */
+        min-width: 200px;
+    }
+}
