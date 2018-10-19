@@ -24,6 +24,7 @@ from webapp2_extras import jinja2
 import hipchatlib
 import models
 import slacklib
+import githubwebhooks
 import util
 
 
@@ -800,5 +801,6 @@ application = webapp2.WSGIApplication([
     ('/admin/send_view_email', SendViewEmail),
     ('/admin/test_send_to_hipchat', hipchatlib.TestSendToHipchat),
     ('/slack', slacklib.SlashCommand),
+    ('/github/pr', githublib.PR),
     ],
     debug=True)

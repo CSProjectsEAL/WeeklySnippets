@@ -1,20 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-"""Snippets server -> Slack integration.
+"""Snippets server -> Github integration.
 
-This provides HipChat integration with the snippet server, for
-organizations that use Slack for messaging.  This provides Slack
-integration with the snippet server, as well prototype CLI style
-interaction with snippets via the Slack "slash commands" integration.
+This provides Github webhook integration with the snippet server, for
+organizations that use for adding github pull requests to users snippets.
 
-Talking to the Slack Web API requires a token.  The admin must enter
-the value of this token on /admin/settings.  There are instructions
+The webhook needs to be added for every repository. The admin must do through the /admin/settings interface.  There are instructions
 there for how to do so.
-
-Additionally, the "slash commands" integration in Slack will post a
-token with each request.  We check this token for security reasons, so
-we get that from /admin/settings as well.
 """
 
 import datetime
@@ -32,12 +25,13 @@ from google.appengine.api import memcache
 
 import models
 import util
+import
 
 # The Slack slash command token is sent to us by the Slack server with
 # every incoming request.  We verify it here for security. To make it
 # easier to develop, you can disable the verification step while
 # testing.
-_REQUIRE_SLASH_TOKEN = True
+_REQUIRE_SLASH_TOKEN = false
 
 
 # This allows mocking in a different day, for testing.
@@ -126,7 +120,7 @@ def send_to_slack_channel(channel, msg):
 
 def command_usage():
     return textwrap.dedent("""
-    /snippets                displays your current snippets
+    /snippets             displays your current snippets
     /snippets list           displays your current snippets
     /snippets last           displays your snippets from last week
     /snippets add [item]     adds an item to your weekly snippets
@@ -137,6 +131,14 @@ def command_usage():
 
 
 def command_help():
+    """Return the help string for slash commands."""
+    return (
+        "I can help you manage your "
+        "<{}|weekly snippets>! :pencil:".format(_WEB_URL) +
+        command_usage()
+    )
+
+def event_pr():
     """Return the help string for slash commands."""
     return (
         "I can help you manage your "
