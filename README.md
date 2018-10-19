@@ -1,5 +1,8 @@
 Snippet Server
 ==============
+Inspired by google's idonethis
+
+http://blog.idonethis.com/google-snippets-internal-tool/
 
 This server supports writing and reading weekly snippets -- status
 updates -- for a group of people.
@@ -9,6 +12,8 @@ the weekly-snippet server I had worked with [at
 Google](http://blog.idonethis.com/google-snippets-internal-tool/).
 Years later, with the help of many other intrepid Khan Academy
 employees, it's ready for the world!
+
+Issue with existing solutions are that it's not free and there should be absolutely no overhead.
 
 While there are [many](https://weekdone.com/)
 [snippet](https://www.workingon.co/)
