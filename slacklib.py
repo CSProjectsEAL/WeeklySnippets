@@ -126,13 +126,19 @@ def send_to_slack_channel(channel, msg):
 
 def command_usage():
     return textwrap.dedent("""
-    /snippets                displays your current snippets
-    /snippets list           displays your current snippets
-    /snippets last           displays your snippets from last week
-    /snippets add [item]     adds an item to your weekly snippets
-    /snippets del [n]        removes snippet number N
-    /snippets dump           shows your snippets list unformatted
-    /snippets help           display this help screen
+    /snippets                       displays your current snippets
+    /snippets list                  displays your current snippets
+    /snippets last                  displays snippets from last week
+    /snippets listcategory          display category snippets from current week
+    /snippets lastcategory          display category snippets from last week
+    /snippets add [item]            adds default item to weekly snippets
+    /snippets addblock [item]       adds blocker item to weekly snippets
+    /snippets addachiev [item]      adds achievement item to weekly snippets
+    /snippets addgoal [item]        adds goal item to weekly snippets
+    /snippets del [n]               removes snippet number N
+    /snippets dump                  shows your snippets list unformatted
+    /snippets help                  display this help screen
+
     """)
 
 
@@ -278,7 +284,7 @@ def _markdown_list(items):
     return "\n".join(["- {}".format(x) for x in items])
 
 
-def command_add(user_email, new_item):
+def command_add(user_email, new_item, prefix):
     """Add a new item to the user's current snippet list."""
     if not new_item:
         return (
@@ -298,7 +304,7 @@ def command_add(user_email, new_item):
             "So I can't add to them! FYI I support markdown lists only, "
             "for more information see `/snippets help` ."
         )
-
+    new_item = prefix + new_item
     new_item = _linkify_usernames(new_item)
     items.append(new_item)
     snippet.text = _markdown_list(items)
@@ -308,7 +314,6 @@ def command_add(user_email, new_item):
     db.put(snippet)
     db.get(snippet.key())    # ensure db consistency for HRD
     return "Added *{}* to your weekly snippets.".format(new_item)
-
 
 def command_del(user_email, args):
     """Delete an item at an index from the users current snippets.
@@ -443,10 +448,25 @@ class SlashCommand(webapp2.RequestHandler):
                 res.write(command_list(user_email))
             elif cmd == 'last':
                 logging.info('last command from user %s', user_name)
-                res.write(command_last(user_email))
+                res.write(command_list(user_email))
+            elif cmd == 'lastcategory':
+                logging.info('lastcategory command from user %s', user_name)
+                res.write(command_lastcategory(user_email))
+            elif cmd == 'listcategory':
+                logging.info('listcategory command from user %s', user_name)
+                res.write(command_listcategory(user_email))
             elif cmd == 'add':
                 logging.info('add command from user %s', user_name)
-                res.write(command_add(user_email, " ".join(args)))
+                res.write(command_add(user_email, " ".join(args)), "")
+            elif cmd == 'addblock':
+                logging.info('addblock command from user %s', user_name)
+                res.write(command_add(user_email, " ".join(args), ":rotating_light: "))
+            elif cmd == 'addachiev':
+                logging.info('addachiev command from user %s', user_name)
+                res.write(command_add(user_email, " ". join(args), ":trophy: "))
+            elif cmd == 'addgoal':
+                logging.info('addgoal command from user %s', user_name)
+                res.write(command_add(user_email, " ". join(args), ":calendar: "))
             elif cmd == 'del':
                 logging.info('del command from user %s', user_name)
                 res.write(command_del(user_email, args))

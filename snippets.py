@@ -228,6 +228,91 @@ def _title_case(s):
     SMALL_RE = re.compile(r' (%s)\b' % SMALL, re.I)
     return SMALL_RE.sub(lambda m: ' ' + m.group(1).lower(), s.title().strip())
 
+class SummaryMarkdownPage(BaseHandler):
+   def getThisWeek(self):
+        if week_string:
+            week = datetime.datetime.strptime(week_string, '%m-%d-%Y').date()
+        else:
+            week = util.existingsnippet_monday(_TODAY_FN())
+
+        snippets_q = models.Snippet.all()
+        snippets_q.filter('week = ', week)
+        snippets = snippets_q.fetch(1000)   # good for many users...
+        # TODO(csilvers): filter based on wants_to_view
+
+        # Get all the user records so we can categorize snippets.
+        user_q = models.User.all()
+        results = user_q.fetch(1000)
+        # Mapping users to categories
+        email_to_category = {}
+        email_to_user = {}
+        for result in results:
+            # People aren't very good about capitalizing their
+            # categories consistently, so we enforce title-case,
+            # with exceptions for 'and'.
+            email_to_category[result.email] = _title_case(result.category)
+            email_to_user[result.email] = result
+
+        # Collect the snippets and users by category.  As we see each email,
+        # delete it from email_to_category.  At the end of this,
+        # email_to_category will hold people who did not give
+        # snippets this week.
+        snippets_and_users_by_category = {}
+        for snippet in snippets:
+            # Ignore this snippet if we don't have permission to view it.
+            if (snippet.private and
+                    not _can_view_private_snippets(_current_user_email(),
+                                                   snippet.email)):
+                continue
+            category = email_to_category.get(
+                snippet.email, models.NULL_CATEGORY
+            )
+            if snippet.email in email_to_user:
+                snippets_and_users_by_category.setdefault(category, []).append(
+                    (snippet, email_to_user[snippet.email])
+                )
+            else:
+                snippets_and_users_by_category.setdefault(category, []).append(
+                    (snippet, models.User(email=snippet.email))
+                )
+
+            if snippet.email in email_to_category:
+                del email_to_category[snippet.email]
+
+        # Add in empty snippets for the people who didn't have any --
+        # unless a user is marked 'hidden'.  (That's what 'hidden'
+        # means: pretend they don't exist until they have a non-empty
+        # snippet again.)
+        for (email, category) in email_to_category.iteritems():
+            if not email_to_user[email].is_hidden:
+                snippet = models.Snippet(email=email, week=week)
+                snippets_and_users_by_category.setdefault(category, []).append(
+                    (snippet, email_to_user[snippet.email])
+                )
+
+        # Now get a sorted list, categories in alphabetical order and
+        # each snippet-author within the category in alphabetical
+        # order.
+        # The data structure is ((category, ((snippet, user), ...)), ...)
+        categories_and_snippets = []
+        for (category,
+             snippets_and_users) in snippets_and_users_by_category.iteritems():
+            snippets_and_users.sort(key=lambda (snippet, user): snippet.email)
+            categories_and_snippets.append((category, snippets_and_users))
+        categories_and_snippets.sort()
+
+        template_values = {
+            'logout_url': users.create_logout_url('/'),
+            'message': self.request.get('msg'),
+            # Used only to switch to 'username' mode and to modify settings.
+            'username': _current_user_email(),
+            'is_admin': users.is_current_user_admin(),
+            'prev_week': week - datetime.timedelta(7),
+            'view_week': week,
+            'next_week': week + datetime.timedelta(7),
+            'categories_and_snippets': categories_and_snippets,
+        }
+        return categories_and_snippets
 
 class SummaryPage(BaseHandler):
     """Show all the snippets for a single week."""
@@ -767,6 +852,23 @@ class SendReminderEmail(BaseHandler):
         msg = 'Reminder: Weekly snippets due today at 5pm.'
         _send_to_chat(msg, "/")
 
+
+class SendViewEmail(BaseHandler):
+    """Send an email to everyone to look at the week's snippets."""
+
+    def _send_mail(self, email, has_snippets):
+        template_values = {'has_snippets': has_snippets}
+        _maybe_send_snippets_mail(email, 'Weekly snippets are ready!',
+                                  'view_email.txt', template_values)
+
+    def get(self):
+        email_to_has_snippet = _get_email_to_current_snippet_map(_TODAY_FN())
+        for (user_email, has_snippet) in email_to_has_snippet.iteritems():
+            self._send_mail(user_email, has_snippet)
+            logging.debug('sent "view" email to %s' % user_email)
+
+        msg = 'Weekly snippets are ready!'
+        _send_to_chat(msg, "/weekly")
 
 class SendViewEmail(BaseHandler):
     """Send an email to everyone to look at the week's snippets."""
